@@ -153,9 +153,10 @@ public class Thompson{
    
 
     // simplify the repeated boolean condition checks
-    public static boolean alpha(char c){ return c >= 'a' && c <= 'z';}
-    public static boolean alphaM(char c){ return c >= 'A' && c <= 'Z';}
-    public static boolean alphabet(char c){ return alpha(c) || c == '_' || alphaM(c);}
+    public static boolean alpha(char c){ return c >= 'a' && c <= 'z';}//letras de la a a la z minusculas
+    public static boolean alphaM(char c){ return c >= 'A' && c <= 'Z';}// letras de la a la z mayusculas
+    public static boolean alphaN(char c){ return c >= '0' && c <= '9';}// digitos del 0 al 9
+    public static boolean alphabet(char c){ return alpha(c) || c == '_' || alphaM(c)|| alphaN(c);}
     public static boolean regexOperator(char c){
         return c == '(' || c == ')' || c == '*' || c == '|';
     }
