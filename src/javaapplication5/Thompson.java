@@ -83,10 +83,11 @@ public class Thompson{
     public static NFA kleene(NFA n){ //metodo para la estrella de kleene que recibe un objeto tipo NFA
         NFA result = new NFA(n.states.size()+2); // crea un nuevo NFA 
         result.transitions.add(new Trans("q0","q1", '_')); // new trans for q0 ,agrega transicion del 0 al 1 usando el vacio
-
+          int estadoNumero;
         // copy existing transisitons
         for (Trans t: n.transitions){
-            result.transitions.add(new Trans(Integer.parseInt(t.state_from.substring(1)) + 1, //crea mas transiciones apartir de la inicial
+            estadoNumero=Integer.parseInt(t.state_from.substring(1))+1;
+            result.transitions.add(new Trans(Integer.toString(estadoNumero), //crea mas transiciones apartir de la inicial
             t.state_to + 1, t.trans_symbol));
         }
         
