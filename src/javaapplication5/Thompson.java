@@ -163,13 +163,53 @@ public class Thompson{
         return alphabet(c) || regexOperator(c);
     }
     // validRegEx() - checks if given string is a valid regular expression.
-    public static boolean validRegEx(String regex){
+    public static boolean validRegEx(String regex)
+    {
+        int l = 0, r = 0;
+        // valida que la ER de entrada no sea un string vacío
         if (regex.isEmpty())
             return false;
-        for (char c: regex.toCharArray())
-            if (!validRegExChar(c))
+        // revisamos la ER caracter por caracter
+        for (int i = 0; i < regex.length(); i++)
+        {
+            // validamos que el caracter pertenezca al alfabeto
+            if (!validRegExChar(regex.charAt(i)))
+            {
                 return false;
-        return true;
+            }
+            // contamos la cantidad de paréntesis derechos e izquierdos
+            else if (regex.charAt(i) == '(' || regex.charAt(i) == ')')
+            {
+                if (regex.charAt(i) == '(') l++;
+                if (regex.charAt(i) == ')') r++;
+            }
+            // revisamos la sintaxis para la operación or
+            else if (regex.charAt(i) == '|')
+            {
+                // revisamos que no hayan caracteres no válidos a la izquierda
+                if(i == 0 || regex.charAt(i-1) == '(' || regex.charAt(i-1) == '*') 
+                {
+                    return false;
+                }
+                // revisamos que no hayan caracteres no válidos a la derecha
+                if(i == regex.length() || regex.charAt(i+1) == ')' || 
+                        regex.charAt(i+1) == '*' || regex.charAt(i+1) == '|')
+                {
+                    return false;
+                }
+            }
+            // revisamos la sintaxis de kleene
+            else if (regex.charAt(i) == '*' && i < regex.length() - 1)
+            {
+                // a la izquerda
+                if (i == 0 || regex.charAt(i-1) == '(' || regex.charAt(i-1) == '|') {return false;}
+                // y a la derecha
+                if (regex.charAt(i+1) == '|' || regex.charAt(i+1) == '*') {return false;}
+            }
+        }
+        // si la cantidad de paréntesis izq y der son los mismos retornamos true
+        // false en caso contrario (la ER no es válida)
+        return l == r; 
     }
 
     /*
