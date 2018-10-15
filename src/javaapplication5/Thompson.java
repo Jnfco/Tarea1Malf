@@ -28,6 +28,8 @@ public class Thompson{
         public ArrayList <Integer> states; // conjunto de estados
         public ArrayList <Trans> transitions; // Conjunto de transiciones
         public int final_state; // Estado final del automata
+        public static ArrayList<Integer>AFD;
+        public static ArrayList<Trans>AFDT;
         
         public NFA(){
             this.states = new ArrayList <Integer> (); //Crear el arreglo de enteros para los estados
@@ -52,12 +54,82 @@ public class Thompson{
             for (int i = 0; i < size; i++)
                 this.states.add(i);
         }
-
+         public void AFD(int estado)
+         {
+             for(int i =0;i<transitions.size();i++)
+            {
+                if(transitions.get(i).state_from ==estado && transitions.get(i).trans_symbol =='_')
+                {
+                    
+                        AFD.add(transitions.get(i).state_to);
+                        AFD(transitions.get(i).state_to);
+                        
+                    
+                    //System.out.println("q"+AFD.get(i));
+                }
+            }
+         }
         public void display(){ // Metodo que imprime las transiciones del automata convertido
+            
+            String estado="";
+            for(Integer i: states)
+            {
+                System.out.println("I:"+i);
+                estado=estado+"q"+i+",";
+                
+            }
+            
+            System.out.println("AFND:");
+            System.out.println("K={"+estado+"}");
+            System.out.println("Sigma=");
+            System.out.println("Delta:");
             for (Trans t: transitions){
-                System.out.println("("+ t.state_from +", "+ t.trans_symbol +
-                    ", "+ t.state_to +")");
-            }    
+                System.out.println("("+"q"+t.state_from +", "+ t.trans_symbol +
+                    ", "+"q"+ t.state_to +")");
+            }
+            System.out.println("s="+"q"+states.get(0));
+            System.out.println("F="+"q"+states.get(states.size()-1));
+            System.out.println("Probando AFD: ");
+            
+            AFD= new ArrayList<>();
+            AFDT= new ArrayList<>();
+            AFD.add(0);
+            AFD(0);
+            int temp;
+            boolean rep=false;
+          for(int i =0;i<transitions.size();i++)
+            {
+                if(transitions.get(i).state_from ==0 && transitions.get(i).trans_symbol =='_')
+                {
+                    
+                        
+                        for(int j=0;j<AFD.size();j++)
+                        {
+                            if(transitions.get(i).state_to == AFD.get(j))
+                            {
+                                rep=true;
+                            }
+                        }
+                        if(rep==false)
+                        {
+                            AFD.add(transitions.get(i).state_to);
+                            AFDT.add(transitions.get(i));
+                        }
+                        
+                        
+                    
+                    
+                    //System.out.println("q"+AFD.get(i));
+                }
+            }
+            for(int i=0;i<AFD.size();i++)
+            {
+                System.out.println("q"+AFD.get(i));
+            }
+            for(int i =0;i<AFDT.size();i++)
+            {
+                System.out.println(AFDT.get(i));
+            }
         }
     }
 
@@ -350,7 +422,7 @@ public class Thompson{
             if (line.equals(":q") || line.equals("QUIT"))
                 break;
             NFA nfa_of_input = compile(line);
-            System.out.println("\nNFA:");
+            //System.out.println("\nNFA:");
             nfa_of_input.display();
         }
     }
