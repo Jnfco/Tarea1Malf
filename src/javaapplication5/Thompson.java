@@ -1,155 +1,31 @@
+package javaapplication5;
+
 
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Stack;
+import javaapplication5.AFND;
+import javaapplication5.Trans;
 
 public class Thompson{
     /*
         Trans - object is used as a tuple of 3 items to depict transitions
             (state from, symbol of tranistion path, state to)
     */
-    public static class Trans{
-        public int state_from; // Estado inicial
-        public int state_to; // Estado final
-        public char trans_symbol; // Simbolo de transicion
 
-        public Trans(int v1, int v2, char sym){
-            this.state_from = v1;
-            this.state_to = v2;
-            this.trans_symbol = sym;
-        }
-    }
 
     /*
         NFA - serves as the graph that represents the Non-Deterministic
             Finite Automata. Will use this to better combine the states.
     */
-    public static class NFA{
-        public ArrayList <Integer> states; // conjunto de estados
-        public ArrayList <Trans> transitions; // Conjunto de transiciones
-        public int final_state; // Estado final del automata
-        public static ArrayList<Integer>AFD;
-        public static ArrayList<Trans>AFDT;
-        
-        public NFA(){
-            this.states = new ArrayList <Integer> (); //Crear el arreglo de enteros para los estados
-            this.transitions = new ArrayList <Trans> (); //Crear un arreglo de tipo transicion
-            this.final_state = 0;// el estado final inicial es 0
-        }
-        public NFA(int size){
-            this.states = new ArrayList <Integer> ();
-            this.transitions = new ArrayList <Trans> ();
-            this.final_state = 0;
-            this.setStateSize(size);// Asignar la cantidad de estados
-        }
-        public NFA(char c){
-            this.states = new ArrayList<Integer> ();
-            this.transitions = new ArrayList <Trans> ();
-            this.setStateSize(2);
-            this.final_state = 1;
-            this.transitions.add(new Trans(0, 1, c));// crea la transicion del 0 al 1 usando el caracter c
-        }
 
-        public void setStateSize(int size){ // metodo que llena el arreglo de estados con la cantidad indicada
-            for (int i = 0; i < size; i++)
-                this.states.add(i);
-        }
-         public void AFD(int estado)
-         {
-             for(int i =0;i<transitions.size();i++)
-            {
-                if(transitions.get(i).state_from ==estado && transitions.get(i).trans_symbol =='_')
-                {
-                    
-                        AFD.add(transitions.get(i).state_to);
-                        AFDT.add(transitions.get(i));
-                        AFD(transitions.get(i).state_to);
-                        
-                    
-                    //System.out.println("q"+AFD.get(i));
-                }
-            }
-         }
-        public void display(){ // Metodo que imprime las transiciones del automata convertido
-            
-            String estado="";
-            for(Integer i: states)
-            {
-                System.out.println("I:"+i);
-                estado=estado+"q"+i+",";
-                
-            }
-            
-            System.out.println("AFND:");
-            System.out.println("K={"+estado+"}");
-            System.out.println("Sigma=");
-            System.out.println("Delta:");
-            for (Trans t: transitions){
-                System.out.println("("+"q"+t.state_from +", "+ t.trans_symbol +
-                    ", "+"q"+ t.state_to +")");
-            }
-            System.out.println("s="+"q"+states.get(0));
-            System.out.println("F="+"q"+states.get(states.size()-1));
-            System.out.println("Probando AFD: ");
-            
-            this.AFD= new ArrayList<Integer>();
-            this.AFDT= new ArrayList<Trans>();
-            AFD.add(0);
-            AFD(0);
-            boolean rep=false;
-            //aqui en este for que viene lo hice para recorrer las transicions y probar con el estado inicial y sus transiciones espiron
-          for(int i =0;i<transitions.size();i++)
-            {
-               
-                if(transitions.get(i).state_from ==0 && transitions.get(i).trans_symbol =='_')
-                {
-                     
-                        
-                        for(int j=0;j<AFD.size();j++)
-                        {
-                          
-                            if(transitions.get(i).state_to == AFD.get(j))
-                            {
-                              
-                                rep=true;
-                            }
-                        }
-                        if(rep==false)
-                        {
-                            
-                            AFD.add(transitions.get(i).state_to);
-                            System.out.println("Vamos a agregar al AFD: "+AFD.get(i));
-                            
-                        }
-                        
-                        
-                    
-                    
-                    //System.out.println("q"+AFD.get(i));
-                }
-            }
-            System.out.println("Tamaño del afd: "+AFD.size());
-            for(int i=0;i<AFD.size();i++)
-            {
-              System.out.println("q"+AFD.get(i));
-            }
-            System.out.println("ahora vamos a imprimir las transiciones");
-            System.out.println("TAmaño de AFDT: "+AFDT.size());
-            for(int i =0;i<AFDT.size();i++)
-            {
-                
-                 System.out.println("("+"q"+AFDT.get(i).state_from +", "+ AFDT.get(i).trans_symbol +
-                    ", "+"q"+ AFDT.get(i).state_to +")");
-            }
-        }
-    }
 
     /*
         kleene() - Highest Precedence regular expression operator. Thompson
             algoritm for kleene star.
     */
-    public static NFA kleene(NFA n){ //metodo para la estrella de kleene que recibe un objeto tipo NFA
-        NFA result = new NFA(n.states.size()+2); // crea un nuevo NFA 
+    public static AFND kleene(AFND n){ //metodo para la estrella de kleene que recibe un objeto tipo NFA
+        AFND result = new AFND(n.states.size()+2); // crea un nuevo NFA 
         result.transitions.add(new Trans(0, 1, '_')); // new trans for q0 ,agrega transicion del 0 al 1 usando el vacio
 
         // copy existing transisitons
@@ -175,7 +51,7 @@ public class Thompson{
     /*
         concat() - Thompson algorithm for concatenation. Middle Precedence.
     */
-    public static NFA concat(NFA n, NFA m){
+    public static AFND concat(AFND n, AFND m){
         ///*
         m.states.remove(0); // delete m's initial state
 
@@ -199,8 +75,8 @@ public class Thompson{
         union() - Lowest Precedence regular expression operator. Thompson
             algorithm for union (or). 
     */
-    public static NFA union(NFA n, NFA m){
-        NFA result = new NFA(n.states.size() + m.states.size() + 2);
+    public static AFND union(AFND n, AFND m){
+        AFND result = new AFND(n.states.size() + m.states.size() + 2);
 
         // the branching of q0 to beginning of n
         result.transitions.add(new Trans(0, 1, '_'));
@@ -301,24 +177,24 @@ public class Thompson{
             stack model to simplify processing the string. This gives 
             descending precedence to characters on the right.
     */
-    public static NFA compile(String regex){
+    public static AFND compile(String regex){
         if (!validRegEx(regex)){
             System.out.println("Invalid Regular Expression Input.");
-            return new NFA(); // empty NFA if invalid regex
+            return new AFND(); // empty NFA if invalid regex
         }
         
         Stack <Character> operators = new Stack <Character> ();
-        Stack <NFA> operands = new Stack <NFA> ();
-        Stack <NFA> concat_stack = new Stack <NFA> ();
+        Stack <AFND> operands = new Stack <AFND> ();
+        Stack <AFND> concat_stack = new Stack <AFND> ();
         boolean ccflag = false; // concat flag
         char op, c; // current character of string
         int para_count = 0;
-        NFA nfa1, nfa2;
+        AFND nfa1, nfa2;
 
         for (int i = 0; i < regex.length(); i++){
             c = regex.charAt(i);
             if (alphabet(c)){
-                operands.push(new NFA(c));
+                operands.push(new AFND(c));
                 if (ccflag){ // concat this w/ previous
                     operators.push('.'); // '.' used to represent concat.
                 }
@@ -417,24 +293,5 @@ public class Thompson{
         return operands.pop();
     }
 
-    public static void main(String[] args){
-        Scanner sc = new Scanner(System.in);
-        String line;
-        System.out.println("\nEnter a regular expression with the " +
-            "alphabet ['a','z'] & E for empty "+"\n* for Kleene Star" + 
-            "\nelements with nothing between them indicates " +
-            "concatenation "+ "\n| for Union \n\":q\" to quit");
-        while(sc.hasNextLine()){
-            System.out.println("Enter a regular expression with the " +
-                "alphabet ['a','z'] & E for empty "+"\n* for Kleene Star" + 
-                "\nelements with nothing between them indicates " +
-                "concatenation "+ "\n| for Union \n\":q\" to quit");
-            line = sc.nextLine();
-            if (line.equals(":q") || line.equals("QUIT"))
-                break;
-            NFA nfa_of_input = compile(line);
-            //System.out.println("\nNFA:");
-            nfa_of_input.display();
-        }
-    }
+
 }
