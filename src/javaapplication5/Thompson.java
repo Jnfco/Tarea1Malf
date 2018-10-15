@@ -9,9 +9,9 @@ public class Thompson{
             (state from, symbol of tranistion path, state to)
     */
     public static class Trans{
-        private int state_from; // Estado inicial
-        private int state_to; // Estado final
-        private char trans_symbol; // Simbolo de transicion
+        public int state_from; // Estado inicial
+        public int state_to; // Estado final
+        public char trans_symbol; // Simbolo de transicion
 
         public Trans(int v1, int v2, char sym){
             this.state_from = v1;
@@ -62,6 +62,7 @@ public class Thompson{
                 {
                     
                         AFD.add(transitions.get(i).state_to);
+                        AFDT.add(transitions.get(i));
                         AFD(transitions.get(i).state_to);
                         
                     
@@ -91,29 +92,34 @@ public class Thompson{
             System.out.println("F="+"q"+states.get(states.size()-1));
             System.out.println("Probando AFD: ");
             
-            AFD= new ArrayList<>();
-            AFDT= new ArrayList<>();
+            this.AFD= new ArrayList<Integer>();
+            this.AFDT= new ArrayList<Trans>();
             AFD.add(0);
             AFD(0);
-            int temp;
             boolean rep=false;
+            //aqui en este for que viene lo hice para recorrer las transicions y probar con el estado inicial y sus transiciones espiron
           for(int i =0;i<transitions.size();i++)
             {
+               
                 if(transitions.get(i).state_from ==0 && transitions.get(i).trans_symbol =='_')
                 {
-                    
+                     
                         
                         for(int j=0;j<AFD.size();j++)
                         {
+                          
                             if(transitions.get(i).state_to == AFD.get(j))
                             {
+                              
                                 rep=true;
                             }
                         }
                         if(rep==false)
                         {
+                            
                             AFD.add(transitions.get(i).state_to);
-                            AFDT.add(transitions.get(i));
+                            System.out.println("Vamos a agregar al AFD: "+AFD.get(i));
+                            
                         }
                         
                         
@@ -122,13 +128,18 @@ public class Thompson{
                     //System.out.println("q"+AFD.get(i));
                 }
             }
+            System.out.println("Tamaño del afd: "+AFD.size());
             for(int i=0;i<AFD.size();i++)
             {
-                System.out.println("q"+AFD.get(i));
+              System.out.println("q"+AFD.get(i));
             }
+            System.out.println("ahora vamos a imprimir las transiciones");
+            System.out.println("TAmaño de AFDT: "+AFDT.size());
             for(int i =0;i<AFDT.size();i++)
             {
-                System.out.println(AFDT.get(i));
+                
+                 System.out.println("("+"q"+AFDT.get(i).state_from +", "+ AFDT.get(i).trans_symbol +
+                    ", "+"q"+ AFDT.get(i).state_to +")");
             }
         }
     }
