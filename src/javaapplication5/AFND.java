@@ -16,6 +16,7 @@ public class AFND {
         public ArrayList <Integer> states; // conjunto de estados
         public ArrayList <Trans> transitions; // Conjunto de transiciones
         public int final_state; // Estado final del automata
+        public int start_state; // Estado inicial del automata
         public static ArrayList<Integer>AFD;
         public static ArrayList<Trans>AFDT;
         
@@ -23,6 +24,7 @@ public class AFND {
             this.states = new ArrayList <Integer> (); //Crear el arreglo de enteros para los estados
             this.transitions = new ArrayList <Trans> (); //Crear un arreglo de tipo transicion
             this.final_state = 0;// el estado final inicial es 0
+            this.start_state = 0; // el estado inicial es 0
         }
         public AFND(int size){
             this.states = new ArrayList <Integer> ();
@@ -42,6 +44,12 @@ public class AFND {
             for (int i = 0; i < size; i++)
                 this.states.add(i);
         }
+        
+        public int getStart()
+        {
+            return start_state;
+        }
+        
          public void AFD(int estado)
          {
              for(int i =0;i<transitions.size();i++)

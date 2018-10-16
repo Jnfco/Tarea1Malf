@@ -114,16 +114,17 @@ public class Thompson{
     // simplify the repeated boolean condition checks
     public static boolean alpha(char c){ return c >= 'a' && c <= 'z';}
     public static boolean alphaM(char c){ return c >= 'A' && c <= 'Z';}
-    public static boolean alphabet(char c){ return alpha(c) || c == '_' || alphaM(c);}
-    public static boolean regexOperator(char c){
-        return c == '(' || c == ')' || c == '*' || c == '|';
-    }
-    public static boolean validRegExChar(char c){
-        return alphabet(c) || regexOperator(c);
-    }
+    public static boolean alphaN(char c){ return c >= '0' && c <= '9'; }
+    public static boolean alphabet(char c){ return alpha(c) || c == '_' || alphaM(c) || alphaN(c);}
+    public static boolean regexOperator(char c){ return c == '(' || c == ')' || c == '*' || c == '|'; }
+    public static boolean validAlphabetNoEps(char c){ return alphaN(c) || alphaM(c) || alpha(c); }
+    public static boolean validRegExChar(char c){ return alphabet(c) || regexOperator(c); }
+    
+    public static ArrayList<Character> inputAlphabet;
     // validRegEx() - checks if given string is a valid regular expression.
     public static boolean validRegEx(String regex)
     {
+        inputAlphabet = new ArrayList<>();
         int l = 0, r = 0;
         // valida que la ER de entrada no sea un string vacío
         if (regex.isEmpty())
@@ -139,6 +140,8 @@ public class Thompson{
             // contamos la cantidad de paréntesis derechos e izquierdos
             else if (regex.charAt(i) == '(' || regex.charAt(i) == ')')
             {
+                if (regex.charAt(i) == '(' && regex.charAt(i+1) == ')') return false;
+                if (regex.charAt(i) == ')' && regex.charAt(i+1) == '(') return false;
                 if (regex.charAt(i) == '(') l++;
                 if (regex.charAt(i) == ')') r++;
             }
@@ -146,7 +149,7 @@ public class Thompson{
             else if (regex.charAt(i) == '|')
             {
                 // revisamos que no hayan caracteres no válidos a la izquierda
-                if(i == 0 || regex.charAt(i-1) == '(' || regex.charAt(i-1) == '*') 
+                if(i == 0 || regex.charAt(i-1) == '(') 
                 {
                     return false;
                 }
@@ -163,11 +166,27 @@ public class Thompson{
                 // a la izquerda
                 if (i == 0 || regex.charAt(i-1) == '(' || regex.charAt(i-1) == '|') {return false;}
                 // y a la derecha
-                if (regex.charAt(i+1) == '|' || regex.charAt(i+1) == '*') {return false;}
+                if (regex.charAt(i+1) == '*') {return false;}
+            }
+            
+            if (validAlphabetNoEps(regex.charAt(i)))
+            {
+                boolean flag = false;
+                for(int k = 0; k < inputAlphabet.size(); k++)
+                {
+                    if(inputAlphabet.get(k) == regex.charAt(i)) flag = true;
+                }
+                if (!flag) inputAlphabet.add(regex.charAt(i));
             }
         }
         // si la cantidad de paréntesis izq y der son los mismos retornamos true
         // false en caso contrario (la ER no es válida)
+        /*
+        for (int k = 0; k < inputAlphabet.size(); k++)
+        {
+            System.out.println("alfabeto: "+inputAlphabet.get(k));
+        }
+        */
         return l == r; 
     }
 
@@ -177,8 +196,10 @@ public class Thompson{
             stack model to simplify processing the string. This gives 
             descending precedence to characters on the right.
     */
-    public static AFND compile(String regex){
-        if (!validRegEx(regex)){
+    public static AFND compile(String regex)
+    {
+        if (!validRegEx(regex))
+        {
             System.out.println("Invalid Regular Expression Input.");
             return new AFND(); // empty NFA if invalid regex
         }
@@ -191,68 +212,81 @@ public class Thompson{
         int para_count = 0;
         AFND nfa1, nfa2;
 
-        for (int i = 0; i < regex.length(); i++){
+        for (int i = 0; i < regex.length(); i++)
+        {
             c = regex.charAt(i);
-            if (alphabet(c)){
+            if (alphabet(c))
+            {
                 operands.push(new AFND(c));
-                if (ccflag){ // concat this w/ previous
+                if (ccflag)
+                { // concat this w/ previous
                     operators.push('.'); // '.' used to represent concat.
                 }
                 else
                     ccflag = true;
             }
-            else{
-                if (c == ')'){
+            else
+            {
+                if (c == ')')
+                {
                     ccflag = false;
-                    if (para_count == 0){
+                    if (para_count == 0)
+                    {
                         System.out.println("Error: More end paranthesis "+
                             "than beginning paranthesis");
                         System.exit(1);
                     }
                     else{ para_count--;}
+                    
                     // process stuff on stack till '('
-                    while (!operators.empty() && operators.peek() != '('){
+                    while (!operators.empty() && operators.peek() != '(')
+                    {
                         op = operators.pop();
-                        if (op == '.'){
+                        if (op == '.')
+                        {
                             nfa2 = operands.pop();
                             nfa1 = operands.pop();
                             operands.push(concat(nfa1, nfa2));
                         }
-                        else if (op == '|'){
+                        else if (op == '|')
+                        {
                             nfa2 = operands.pop();
                             
-                            if(!operators.empty() && 
-                                operators.peek() == '.'){
+                            if(!operators.empty() && operators.peek() == '.')
+                            {
                                 
                                 concat_stack.push(operands.pop());
-                                while (!operators.empty() && 
-                                    operators.peek() == '.'){
-                                    
+                                while (!operators.empty() && operators.peek() == '.')
+                                {
                                     concat_stack.push(operands.pop());
                                     operators.pop();
                                 }
-                                nfa1 = concat(concat_stack.pop(),
-                                    concat_stack.pop());
-                                while (concat_stack.size() > 0){
+                                nfa1 = concat(concat_stack.pop(), concat_stack.pop());
+                                while (concat_stack.size() > 0)
+                                {
                                    nfa1 =  concat(nfa1, concat_stack.pop());
                                 }
                             }
-                            else{
+                            else
+                            {
                                 nfa1 = operands.pop();
                             }
                             operands.push(union(nfa1, nfa2));
                         }
                     }
                 }
-                else if (c == '*'){
+                else if (c == '*')
+                {
                     operands.push(kleene(operands.pop()));
                     ccflag = true;
                 }
-                else if (c == '('){ // if any other operator: push
+                else if (c == '(')
+                { // if any other operator: push
                     operators.push(c);
                     para_count++;
                 }
-                else if (c == '|'){
+                else if (c == '|')
+                {
                     operators.push(c);
                     ccflag = false;
                 }
