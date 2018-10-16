@@ -28,10 +28,12 @@ public class Main
             if (line.equals(":q") || line.equals("QUIT"))
                 break;
             AFND nfa_of_input = compile(line);
-            
+            System.out.println("tamaño transiciones: " + nfa_of_input.transitions.size());
             //System.out.println("\nNFA:");
-            nfa_of_input.display();
             
+            
+            nfa_of_input.display();
+            System.out.println("tamaño transiciones despues del display: " + nfa_of_input.transitions.size());
             
             AFD afd = new AFD(nfa_of_input);
         }

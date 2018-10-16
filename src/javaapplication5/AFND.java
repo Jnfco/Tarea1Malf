@@ -50,6 +50,11 @@ public class AFND {
             return start_state;
         }
         
+        public void addState(int state)
+        {
+            states.add(state);
+        }
+        
          public void AFD(int estado)
          {
              for(int i =0;i<transitions.size();i++)
@@ -137,6 +142,7 @@ public class AFND {
                  System.out.println("("+"q"+AFDT.get(i).state_from +", "+ AFDT.get(i).trans_symbol +
                     ", "+"q"+ AFDT.get(i).state_to +")");
             }
+            
         }
 
     

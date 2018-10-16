@@ -21,6 +21,7 @@ public class AFD extends AFND
     public AFD(AFND afnd)
     {
         super();
+        ArrayList<Trans> transitions = afnd.transitions;
         
         HashMap<ArrayList<Integer>, Integer> map = new HashMap<ArrayList<Integer>, Integer>();
         
@@ -45,39 +46,48 @@ public class AFD extends AFND
         while(!queue.isEmpty()) 
         {
             ArrayList<Integer> set = queue.poll();
+            System.out.println("set inicial: "+set.toString());
 
             for (int i = 0; i < inputAlphabet.size(); i++) 
             {
+                System.out.println("letra: " + inputAlphabet.get(i));
+                System.out.println("trasitions: " + transitions.size());
                 // transiciones que van desde el estado set por la transicion i
-                ArrayList<Integer> trans = set.transition(inputAlphabet.get(i));
-                State to = null;
-                if (!map.containsKey(trans)) 
+                for (Trans t : transitions)
                 {
-                    to = trans.toState(parser);
-                    map.put(trans, to);
-                    if (!queue.contains(trans))
-                        queue.offer(trans);
+                    System.out.println("tamos dentro del for");
+                    ArrayList<Integer> trans = new ArrayList<>();
+                    if(t.state_from == set.get(set.indexOf(t)) && t.trans_symbol == inputAlphabet.get(i))
+                    {
+                        System.out.println("se agrega state to: "+t.state_to);
+                        trans.add(t.state_to);
+                    }
+                    
+                    int to = -1;
+                    if(!map.containsKey(trans))
+                    {
+                        System.out.println("if mapa no contiene trans");
+                        to = trans.get(i);
+                        map.put(trans, to);
+                        if (!queue.contains(trans)) queue.offer(trans); System.out.println("fila no contiene trans");
+                    }
+                    else { to = map.get(trans); }
+                    
+                    int from = map.get(set);
+                    System.out.println("from: " + from);
+                    addState(from);
+                    addState(to);
+                    transitions.add( new Trans(from, to, inputAlphabet.get(i)) );
                 }
-                else 
-                {
-                    to = map.get(trans);
-                }
-
-                State from = map.get(set);
-                addState(from);
-                addState(to);
-                addTransition(from, (char)i, to);
             }
-        }
+        }        
         
-        for (ArrayList<Integer> name: map.keySet()){
-
+        for (ArrayList<Integer> name: map.keySet())
+        {
             String key =name.toString();
             String value = map.get(name).toString();
             System.out.println("clave: " + key + "\nvalor: " + value);
-
-
-}
+        }
     }
     
     // Which states can be reached on a certain character?

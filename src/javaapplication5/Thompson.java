@@ -7,7 +7,7 @@ import java.util.Stack;
 import javaapplication5.AFND;
 import javaapplication5.Trans;
 
-public class Thompson{
+public class Thompson {
     /*
         Trans - object is used as a tuple of 3 items to depict transitions
             (state from, symbol of tranistion path, state to)
