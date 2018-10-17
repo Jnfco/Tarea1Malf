@@ -24,6 +24,7 @@ public class Trans {
         this.trans_symbol = sym;
     }
     
+    /*
     public ArrayList<Integer> getAllTransitions(char c, AFND afnd) 
     {
         if (this.state_from == afnd.final_state)
@@ -35,6 +36,6 @@ public class Trans {
             return this.
         }
     }
-    
+    */
     
 }

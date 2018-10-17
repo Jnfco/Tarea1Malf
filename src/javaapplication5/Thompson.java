@@ -333,6 +333,7 @@ public class Thompson {
         return operands.pop();
     }
     
+    /*
     public static AFD generateDFA(AFND afnd) 
     {
         // Creating the DFA
@@ -435,7 +436,7 @@ public class Thompson {
 
 			for (State p : allStates) {	set.add(p);	}
 		}
-} 
-
+        } 
+*/
 
 }
