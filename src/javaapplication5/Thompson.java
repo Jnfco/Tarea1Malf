@@ -3,11 +3,17 @@ package javaapplication5;
 
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Set;
 import java.util.Stack;
 import javaapplication5.AFND;
 import javaapplication5.Trans;
 
 public class Thompson {
+    
+    private static Set<Integer> set1 = new HashSet <Integer> ();
+    private static Set<Integer> set2 = new HashSet <Integer> ();
     /*
         Trans - object is used as a tuple of 3 items to depict transitions
             (state from, symbol of tranistion path, state to)
@@ -326,6 +332,110 @@ public class Thompson {
         }
         return operands.pop();
     }
+    
+    public static AFD generateDFA(AFND afnd) 
+    {
+        // Creating the DFA
+        AFD afd = new AFD();
+
+        // Clearing all the states ID for the DFA
+        int stateID = 0;
+
+        // Create an arrayList of unprocessed States
+        LinkedList <Integer> unprocessed = new LinkedList<Integer> ();
+
+        // Create sets
+        set1 = new HashSet <Integer> ();
+        set2 = new HashSet <Integer> ();
+
+        // Add first state to the set1
+        set1.add(afnd.start_state);
+
+        // Run the first remove Epsilon the get states that
+        // run with epsilon
+        removeEpsilonTransition();
+
+        // Create the start state of DFA and add to the stack
+        State dfaStart = new State (set2, stateID++);
+
+        dfa.getDfa().addLast(dfaStart);
+        unprocessed.addLast(dfaStart);
+
+        // While there is elements in the stack
+        while (!unprocessed.isEmpty()) {
+                // Process and remove last state in stack
+                State state = unprocessed.removeLast();
+
+                // Check if input symbol
+                for (Character symbol : input) {
+                        set1 = new HashSet<State> ();
+                        set2 = new HashSet<State> ();
+
+                        moveStates (symbol, state.getStates(), set1);
+                        removeEpsilonTransition ();
+
+                        boolean found = false;
+                        State st = null;
+
+                        for (int i = 0 ; i < dfa.getDfa().size(); i++) {
+                                st = dfa.getDfa().get(i);
+
+                                if (st.getStates().containsAll(set2)) {
+                                        found = true;
+                                        break;
+                                }
+                        }
+
+                        // Not in the DFA set, add it
+                        if (!found) {
+                                State p = new State (set2, stateID++);
+                                unprocessed.addLast(p);
+                                dfa.getDfa().addLast(p);
+                                state.addTransition(p, symbol);
+
+                        // Already in the DFA set
+                        } else {
+                                state.addTransition(st, symbol);
+                        }
+                }			
+        }
+        // Return the complete DFA
+        return dfa;
+	}
+
+	// Remove the epsilon transition from states
+	private static void removeEpsilonTransition() {
+		Stack <Integer> stack = new Stack <Integer> ();
+		set2 = set1;
+
+		for (Integer st : set1) { stack.push(st); }
+
+		while (!stack.isEmpty()) {
+			Integer st = stack.pop();
+
+			ArrayList <Integer> epsilonStates = st.getAllTransitions('_');
+
+			for (State p : epsilonStates) {
+				// Check p is in the set otherwise Add
+				if (!set2.contains(p)) {
+					set2.add(p);
+					stack.push(p);
+				}				
+			}
+		}		
+	}
+
+	// Move states based on input symbol
+	private static void moveStates(Character c, Set<State> states,	Set<State> set) {
+		ArrayList <State> temp = new ArrayList<State> ();
+
+		for (State st : states) {	temp.add(st);	}
+		for (State st : temp) {			
+			ArrayList<State> allStates = st.getAllTransitions(c);
+
+			for (State p : allStates) {	set.add(p);	}
+		}
+} 
 
 
 }

@@ -18,6 +18,8 @@ import java.util.Queue;
  */
 public class AFD extends AFND
 {
+    public AFD(){}
+    
     public AFD(AFND afnd)
     {
         super();
@@ -53,14 +55,15 @@ public class AFD extends AFND
                 System.out.println("letra: " + inputAlphabet.get(i));
                 System.out.println("trasitions: " + transitions.size());
                 // transiciones que van desde el estado set por la transicion i
-                for (Trans t : transitions)
+                for (int j = 0; j < transitions.size(); j++)
                 {
                     System.out.println("tamos dentro del for");
                     ArrayList<Integer> trans = new ArrayList<>();
-                    if(t.state_from == set.get(set.indexOf(t)) && t.trans_symbol == inputAlphabet.get(i))
+                    if(transitions.get(j).state_from == set.get(i) && 
+                            (transitions.get(j).trans_symbol == inputAlphabet.get(i) || transitions.get(j).trans_symbol == '_'))
                     {
-                        System.out.println("se agrega state to: "+t.state_to);
-                        trans.add(t.state_to);
+                        System.out.println("se agrega state to: "+transitions.get(j).state_to);
+                        trans.add(transitions.get(j).state_to);
                     }
                     
                     int to = -1;
@@ -89,6 +92,7 @@ public class AFD extends AFND
             System.out.println("clave: " + key + "\nvalor: " + value);
         }
     }
+
     
     // Which states can be reached on a certain character?
     public HashSet<Integer> statesReachableOn(int from, Character on) 
