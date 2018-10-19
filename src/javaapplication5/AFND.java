@@ -93,7 +93,7 @@ public class AFND {
         String estado="";
         for(Integer i: states)
         {
-            System.out.println("I:"+i);
+            
             estado=estado+"q"+i+",";
 
         }
