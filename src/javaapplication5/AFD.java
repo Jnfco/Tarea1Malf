@@ -6,6 +6,7 @@
 package javaapplication5;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -23,16 +24,31 @@ public class AFD extends AFND
 {
     private ArrayList<Character>alphabet;
     private ArrayList<Trans>transitions;
-    private Map<List<Integer>,List<List<Integer>>> map;
+    private EstadoAFD estadoAFD;
+    private ArrayList<EstadoAFD> estadosAFD;
+    private ArrayList<Integer> estados;
+    private AFND afnd;
+    private int estadoInicial;
+    private int estadoFinal;
+    private Map map;
+            
+    //private Map<List<Integer>,List<List<Integer>>> map;
     
     public AFD(){}
     
     public AFD(AFND afnd)
     {
         super();
+        this.afnd = afnd;
         transitions = afnd.transitions;
-        int estadoInicial = afnd.getStart();
+        estadoInicial = afnd.getStart();
+        estadoAFD = new EstadoAFD(afnd);
+        estadoFinal = afnd.final_state;
+        
+        
         map=new HashMap<>();
+        
+        
         alphabet=Thompson.inputAlphabet;
         crearTablaAFD(afnd);
         
@@ -40,12 +56,30 @@ public class AFD extends AFND
     
     public void crearTablaAFD(AFND afnd)
     {
-        for(int i=0;i<transitions.size();i++)
+        for(int i=0;i<alphabet.size();i++)
         {
-            for(int j=0;j<alphabet.size();j++)
+            for(int j=0;j<transitions.size();j++)
             {
                 
             }
         }
     }
+    
+    public void agregarEstadoAFD(int estado, char c)
+    {
+        estadoAFD = new EstadoAFD(afnd);
+        estados = afnd.getNextStates(afnd, estado, c);
+        Collections.sort(estados);
+        if(estados.contains(estadoInicial))
+        {
+            estadoAFD.setEstadoInicial(true);
+        }
+        
+        if(estados.contains(estadoFinal))
+        {
+            estadoAFD.setEstadoFinal(true);
+        }
+    }
+    
+    
 }
