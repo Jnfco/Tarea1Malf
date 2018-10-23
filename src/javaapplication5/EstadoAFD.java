@@ -19,7 +19,7 @@ public class EstadoAFD {
     private boolean estadoFinal;
     private ArrayList<Integer>estados;
 
-    public EstadoAFD(AFND afnd) {
+    public EstadoAFD() {
         
         this.estados= new ArrayList<>();
         this.estadoInicial=false;

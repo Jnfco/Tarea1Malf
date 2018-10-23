@@ -60,10 +60,6 @@ public class AFND {
 
     public ArrayList<Integer> getNextStates(AFND afnd, int from, char c)
     {
-        if(nextStates.size()==0)
-        {
-            nextStates.add(from);
-        }
         for(Trans t : transitions)
         {
             /*if(t.state_from == from && t.trans_symbol == c)

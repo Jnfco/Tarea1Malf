@@ -24,8 +24,9 @@ public class AFD extends AFND
 {
     private ArrayList<Character>alphabet;
     private ArrayList<Trans>transitions;
+    private EstadoAFD estadoK;
     private EstadoAFD estadoAFD;
-    private ArrayList<EstadoAFD> estadosAFD;
+    private ArrayList<EstadoAFD> estadosV;
     private ArrayList<Integer> estados;
     private AFND afnd;
     private int estadoInicial;
@@ -42,44 +43,49 @@ public class AFD extends AFND
         this.afnd = afnd;
         transitions = afnd.transitions;
         estadoInicial = afnd.getStart();
-        estadoAFD = new EstadoAFD(afnd);
+        //estadosK = new EstadoAFD(afnd);
         estadoFinal = afnd.final_state;
+        estadoK = new EstadoAFD();
+        estadosV = new ArrayList<EstadoAFD>();
+        
         
         
         map=new HashMap<>();
         
         
         alphabet=Thompson.inputAlphabet;
+        alphabet.remove(0);
         crearTablaAFD(afnd);
-        System.out.println("EstadoAFD:"+estadoAFD.getEstados());
-        System.out.println("Estados:");
-        for(int i=0;i<estados.size();i++)
-        {
-            System.out.println(estados.get(i));
-        }
+        
         
      }
     
     public void crearTablaAFD(AFND afnd)
     {
-        estados=afnd.getNextStates(afnd,estadoInicial,'_');
-        for(int i=0;i<afnd.states.size();i++)
+        estadoK = crearEstadoAFD(estadoInicial, '_');
+        System.out.println("estado K: " +estadoK.getEstados().toString());
+        
+        for(int i=0; i < alphabet.size(); i++)
         {
-            for(int j=0;j<alphabet.size();j++)
+            estadosV.add(new EstadoAFD());
+            for(int j=0; j < estadoK.getEstados().size(); j++)
             {
-                
-                System.out.println("Alphabet:"+alphabet.get(j));
-                
-                agregarEstadoAFD(afnd.states.get(i),alphabet.get(j));
+                estadosV.get(i).getEstados().add(estadoK.getEstados().get(j));
+                estadosV.add(i, crearEstadoAFD(estadoK.getEstados().get(j), alphabet.get(i)));
+                System.out.println("estadoV " + j + ": " + estadosV.get(j).getEstados().toString());
+                                
+                //crearEstadoAFD(afnd.states.get(i),alphabet.get(j));
             }
-
+            map.put(estadoK, estadosV);
+            
         }
     }
     
-    public void agregarEstadoAFD(int estado, char c)
+    public EstadoAFD crearEstadoAFD(int estado, char c)
     {
-        estadoAFD = new EstadoAFD(afnd);
+        estadoAFD = new EstadoAFD();
         estados = afnd.getNextStates(afnd, estado, c);
+        estadoAFD.setEstados(estados);
         System.out.println("Estadoss:"+estados.toString());
         Collections.sort(estados);
         if(estados.contains(estadoInicial))
@@ -91,6 +97,8 @@ public class AFD extends AFND
         {
             estadoAFD.setEstadoFinal(true);
         }
+        
+        return estadoAFD;
     }
     
     
