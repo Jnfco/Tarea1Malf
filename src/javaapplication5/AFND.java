@@ -19,18 +19,21 @@ public class AFND {
     public int start_state; // Estado inicial del automata
     public static ArrayList<Integer>AFD;
     public static ArrayList<Trans>AFDT;
+    private ArrayList<Integer>nextStates;
 
     public AFND(){
         this.states = new ArrayList <Integer> (); //Crear el arreglo de enteros para los estados
         this.transitions = new ArrayList <Trans> (); //Crear un arreglo de tipo transicion
         this.final_state = 0;// el estado final inicial es 0
         this.start_state = 0; // el estado inicial es 0
+       
     }
     public AFND(int size){
         this.states = new ArrayList <Integer> ();
         this.transitions = new ArrayList <Trans> ();
         this.final_state = 0;
         this.setStateSize(size);// Asignar la cantidad de estados
+         this.nextStates=new ArrayList<>();
     }
     public AFND(char c){
         this.states = new ArrayList<Integer> ();
@@ -57,20 +60,23 @@ public class AFND {
 
     public ArrayList<Integer> getNextStates(AFND afnd, int from, char c)
     {
-        ArrayList<Integer> nextStates = new ArrayList<Integer>();
-
+        if(nextStates.size()==0)
+        {
+            nextStates.add(from);
+        }
         for(Trans t : transitions)
         {
-            if(t.state_from == from && t.trans_symbol == c)
+            /*if(t.state_from == from && t.trans_symbol == c)
             {
                 nextStates.add(t.state_to);
-            }
-            if (t.state_from == from && t.trans_symbol == '_')
+            }*/
+            if (t.state_from == from && t.trans_symbol == c)
             {
                 nextStates.add(t.state_to);
-                getNextStates(afnd, t.state_to, '_');
+                getNextStates(afnd, t.state_to,c);
             }
         }
+        
         return nextStates;
     }
 

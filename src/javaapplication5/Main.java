@@ -36,6 +36,7 @@ public class Main
             System.out.println("tamaño transiciones despues del display: " + nfa_of_input.transitions.size());
             
             AFD afd = new AFD(nfa_of_input);
+            
         }
     }
    

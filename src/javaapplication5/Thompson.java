@@ -131,6 +131,7 @@ public class Thompson {
     public static boolean validRegEx(String regex)
     {
         inputAlphabet = new ArrayList<>();
+        inputAlphabet.add('_');
         int l = 0, r = 0;
         // valida que la ER de entrada no sea un string vacío
         if (regex.isEmpty())
@@ -178,6 +179,7 @@ public class Thompson {
             if (validAlphabetNoEps(regex.charAt(i)))
             {
                 boolean flag = false;
+                
                 for(int k = 0; k < inputAlphabet.size(); k++)
                 {
                     if(inputAlphabet.get(k) == regex.charAt(i)) flag = true;

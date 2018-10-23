@@ -51,17 +51,28 @@ public class AFD extends AFND
         
         alphabet=Thompson.inputAlphabet;
         crearTablaAFD(afnd);
+        System.out.println("EstadoAFD:"+estadoAFD.getEstados());
+        System.out.println("Estados:");
+        for(int i=0;i<estados.size();i++)
+        {
+            System.out.println(estados.get(i));
+        }
         
      }
     
     public void crearTablaAFD(AFND afnd)
     {
-        for(int i=0;i<alphabet.size();i++)
+        estados=afnd.getNextStates(afnd,estadoInicial,'_');
+        for(int i=0;i<afnd.states.size();i++)
         {
-            for(int j=0;j<transitions.size();j++)
+            for(int j=0;j<alphabet.size();j++)
             {
                 
+                System.out.println("Alphabet:"+alphabet.get(j));
+                
+                agregarEstadoAFD(afnd.states.get(i),alphabet.get(j));
             }
+
         }
     }
     
@@ -69,6 +80,7 @@ public class AFD extends AFND
     {
         estadoAFD = new EstadoAFD(afnd);
         estados = afnd.getNextStates(afnd, estado, c);
+        System.out.println("Estadoss:"+estados.toString());
         Collections.sort(estados);
         if(estados.contains(estadoInicial))
         {
