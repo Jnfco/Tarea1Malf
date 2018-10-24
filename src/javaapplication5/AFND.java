@@ -58,32 +58,33 @@ public class AFND {
         states.add(state);
     }
 
-    public ArrayList<Integer> getNextStatesEPS(AFND afnd, int from, char c)
+    public ArrayList<Integer> getNextStatesEPS(AFND afnd, int from)
     {
-        for(Trans t : transitions)
+        for(int i = 0; i < afnd.transitions.size(); i++)
         {
-            if (t.state_from == from && t.trans_symbol == '_')
+            if (afnd.transitions.get(i).state_from == from && afnd.transitions.get(i).trans_symbol == '_')
             {
-                nextStates.add(t.state_to);
-                getNextStatesEPS(afnd, t.state_to,c);
+                afnd.nextStates.add(afnd.transitions.get(i).state_to);
+                getNextStatesEPS(afnd, afnd.transitions.get(i).state_to);
             }
         }
         
-        return nextStates;
+        return afnd.nextStates;
     }
     
      public ArrayList<Integer> getNextStates(AFND afnd, int from, char c)
     {
-        for(Trans t : transitions)
+        for(int i = 0; i < afnd.transitions.size(); i++)
         {
-            if (t.state_from == from && t.trans_symbol == c)
+            if (afnd.transitions.get(i).state_from == from && afnd.transitions.get(i).trans_symbol == c)
             {
-                nextStates.add(t.state_to);
-                
+                //afnd.nextStates.add(afnd.transitions.get(i).state_from);
+                afnd.nextStates.add(afnd.transitions.get(i).state_to);
+                getNextStatesEPS(afnd, afnd.transitions.get(i).state_to);
             }
         }
         
-        return nextStates;
+        return afnd.nextStates;
     }
 
     public void AFD(int estado)
@@ -163,4 +164,9 @@ public class AFND {
         }
 
     }    
+    
+    public void limpiarArrayNextStates(AFND afnd)
+    {
+        afnd.nextStates = new ArrayList<Integer>();
+    }
 }
