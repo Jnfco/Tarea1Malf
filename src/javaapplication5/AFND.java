@@ -58,18 +58,28 @@ public class AFND {
         states.add(state);
     }
 
-    public ArrayList<Integer> getNextStates(AFND afnd, int from, char c)
+    public ArrayList<Integer> getNextStatesEPS(AFND afnd, int from, char c)
     {
         for(Trans t : transitions)
         {
-            /*if(t.state_from == from && t.trans_symbol == c)
+            if (t.state_from == from && t.trans_symbol == '_')
             {
                 nextStates.add(t.state_to);
-            }*/
+                getNextStatesEPS(afnd, t.state_to,c);
+            }
+        }
+        
+        return nextStates;
+    }
+    
+     public ArrayList<Integer> getNextStates(AFND afnd, int from, char c)
+    {
+        for(Trans t : transitions)
+        {
             if (t.state_from == from && t.trans_symbol == c)
             {
                 nextStates.add(t.state_to);
-                getNextStates(afnd, t.state_to,c);
+                
             }
         }
         

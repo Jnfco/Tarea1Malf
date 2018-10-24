@@ -66,6 +66,7 @@ public class AFD extends AFND
            for(int j=0;j<alphabet.size();j++)
             {
                 CrearAFD(afnd.states.get(i),alphabet.get(j));
+                CrearAFD(afnd.states.get(i),'_');
             }
        }
        
