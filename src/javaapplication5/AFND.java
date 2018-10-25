@@ -149,19 +149,8 @@ public class AFND {
                 //System.out.println("q"+AFD.get(i));
             }
         }
-        System.out.println("Tamaño del afd: "+AFD.size());
-        for(int i=0;i<AFD.size();i++)
-        {
-            System.out.println("q"+AFD.get(i));
-        }
-        System.out.println("ahora vamos a imprimir las transiciones");
-        System.out.println("TAmaño de AFDT: "+AFDT.size());
-        for(int i =0;i<AFDT.size();i++)
-        {
-
-            System.out.println("("+"q"+AFDT.get(i).state_from +", "+ AFDT.get(i).trans_symbol +
-                ", "+"q"+ AFDT.get(i).state_to +")");
-        }
+        
+       
 
     }    
     
