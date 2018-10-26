@@ -6,11 +6,13 @@
 package javaapplication5;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import static javaapplication5.Thompson.alphabet;
 
 /**
@@ -72,22 +74,47 @@ public class AFD extends AFND
         Collections.sort(estados2);
         estadoK.setEstados(estados2);
         estadoK.setEstadoInicial(true);
-        if(estados.contains(afnd.final_state))       
+        if(estadoK.getEstados().contains(afnd.final_state))       
         {
             estadoK.setEstadoFinal(true);
         }
         //----------------------------------------------------------------------
         
         crearMap(estadoK);
+        System.out.println("Tamaño de valores del map:"+map.values().size());
+        System.out.println("Tamaño de estadosV:"+estadosV.size());
         // arreglar esto vvvvvvvvvvvvvvvvvvvvvvvvvv
         for (int i = 0; i < map.values().size(); i++)
         {
-            if(!map.keySet().contains(map.values().iterator()))
+            for(int j=0;j<estadosV.size();j++)
             {
-                estadoK = new EstadoAFD();
-                estadoK.setEstados(estadosV.get(i).getEstados());
-                crearMap(estadoK);
+                if(!map.keySet().contains(map.values().iterator().next()))
+                {
+                    estadoK = new EstadoAFD();
+                    estadoK.setEstados(estadosV.get(j).getEstados());// El problema lo causa el map, ya que este tiene menos elementos que estados V
+                    
+                     if(estadoK.getEstados().contains(afnd.final_state))       
+                    {
+                        estadoK.setEstadoFinal(true);
+                    }
+                      if(estadoK.getEstados().contains(afnd.start_state))       
+                    {
+                        estadoK.setEstadoInicial(true);
+                    }
+                    crearMap(estadoK);
+                
+                }
             }
+            
+        }
+        
+        for (int i = 0; i < map.values().size(); i++)
+        {
+            for(int j=0;j<estadosV.size();j++)
+            {
+                
+            }
+            
         }
     }
     
