@@ -6,8 +6,6 @@
 package javaapplication5;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 /**
  *
@@ -18,6 +16,7 @@ public class EstadoAFD {
     private boolean estadoInicial;
     private boolean estadoFinal;
     private ArrayList<Integer>estados;
+    private int numEstado;
 
     public EstadoAFD() {
         
@@ -52,6 +51,16 @@ public class EstadoAFD {
     public void addEstado(int estado)
     {
         this.estados.add(estado);
+    }
+    
+    public int getNumEstado()
+    {
+        return this.numEstado;
+    }
+    
+    public void setNumEstado(int e)
+    {
+        this.numEstado = e;
     }
     
     
