@@ -37,7 +37,7 @@ public class AFD extends AFND
     ArrayList<Integer> est;
             
     //private Map<List<Integer>,List<List<Integer>>> map;
-    
+    // constructor para afnd de 1 transición
     public AFD(AFND afnd, char c)
     {
         numEstado = 0;
@@ -62,7 +62,7 @@ public class AFD extends AFND
         map = new HashMap<EstadoAFD, ArrayList<EstadoAFD>>();
         map.put(e0, ae);
         
-        displayAFD();
+        displayAFD2();
     }
     
     public AFD(AFND afnd)
@@ -283,6 +283,75 @@ public class AFD extends AFND
         
     }
     
+    public void displayAFD2()
+    {
+        System.out.println("AFD");
+        
+        est = new ArrayList<>();
+        System.out.print("K={");
+        for(Map.Entry<EstadoAFD, ArrayList<EstadoAFD>> entry : map.entrySet())
+        {
+            est.add(entry.getKey().getNumEstado());
+        }
+        Collections.sort(est);
+        for(Integer i : est)
+        {
+            if(est.get(i) < est.size() - 1)
+            {
+                System.out.print("q" + i + ",");
+            }
+            else
+            {
+                System.out.print("q" + i + "}");
+            }
+        }
+        System.out.println("");
+        
+        
+        System.out.println("delta:");
+        for(Map.Entry<EstadoAFD, ArrayList<EstadoAFD>> entry : map.entrySet())
+        {                
+            System.out.println("(q" + entry.getKey().getNumEstado() + "," + 
+                    Thompson.inputAlphabet.get(0) + 
+                    ",q" + entry.getValue().get(0).getNumEstado() + ")");            
+        }
+        
+        System.out.print("s=q");
+        for(Map.Entry<EstadoAFD, ArrayList<EstadoAFD>> entry : map.entrySet())
+        {
+            if(entry.getKey().isEstadoInicial())
+            {
+                System.out.println("" + entry.getKey().getNumEstado());
+            }
+        }
+        
+        System.out.print("");
+        
+        System.out.print("F={");
+        est = new ArrayList<>();
+        for(Map.Entry<EstadoAFD, ArrayList<EstadoAFD>> entry : map.entrySet())
+        {
+            if(entry.getValue().get(0).isEstadoFinal())
+            {
+                est.add(entry.getValue().get(0).getNumEstado());
+            }
+        }
+        Collections.sort(est);
+        for(int i = 0; i < est.size(); i++)
+        {
+            if(est.get(i) < est.size())
+            {
+                System.out.print("q" + est.get(i) + ",");
+            }
+            else
+            {
+                System.out.print("q" + est.get(i) + "}");
+            }
+        }
+        System.out.println("");
+    }
+            
+            
     public int getNumEstadoSumidero()
     {
         est = new ArrayList<>();
@@ -294,5 +363,6 @@ public class AFD extends AFND
         return est.size();
     }
     
+   
     
 }
