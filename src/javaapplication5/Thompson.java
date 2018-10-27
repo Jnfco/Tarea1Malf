@@ -122,7 +122,7 @@ public class Thompson {
     public static boolean alphaM(char c){ return c >= 'A' && c <= 'Z';}
     public static boolean alphaN(char c){ return c >= '0' && c <= '9'; }
     public static boolean alphabet(char c){ return alpha(c) || c == '_' || alphaM(c) || alphaN(c);}
-    public static boolean regexOperator(char c){ return c == '(' || c == ')' || c == '*' || c == '|'; }
+    public static boolean regexOperator(char c){ return c == '(' || c == ')' || c == '*' || c == '|' || c == '.'; }
     public static boolean validAlphabetNoEps(char c){ return alphaN(c) || alphaM(c) || alpha(c); }
     public static boolean validRegExChar(char c){ return alphabet(c) || regexOperator(c); }
     
@@ -210,6 +210,11 @@ public class Thompson {
         {
             System.out.println("Invalid Regular Expression Input.");
             return new AFND(); // empty NFA if invalid regex
+        }
+        
+        if(regex.length() == 1 && alphabet(regex.charAt(0)))
+        {
+            return new AFND(regex.charAt(0));
         }
         
         Stack <Character> operators = new Stack <Character> ();

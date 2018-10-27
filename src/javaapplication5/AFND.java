@@ -80,7 +80,9 @@ public class AFND {
             {
                 //afnd.nextStates.add(afnd.transitions.get(i).state_from);
                 afnd.nextStates.add(afnd.transitions.get(i).state_to);
+                
                 getNextStatesEPS(afnd, afnd.transitions.get(i).state_to);
+                
             }
         }
         
@@ -107,13 +109,43 @@ public class AFND {
         for(Integer i: states)
         {
             
-            estado=estado+"q"+i+",";
+            estado=estado+"q"+ i +",";
 
         }
 
+        for(int i = 0; i < states.size(); i++)
+        {
+            states.set(i, i);
+        }
+        
         System.out.println("AFND:");
-        System.out.println("K={"+estado+"}");
-        System.out.println("Sigma=");
+        System.out.print("K={");
+        for(int i = 0; i < this.states.size(); i++)
+        {
+            if(i == states.size() - 1)
+            {
+                System.out.print("q" + this.states.get(i));
+            }
+            else
+            {
+                System.out.print("q" + this.states.get(i) + ",");
+            }
+        }
+        System.out.println("}");
+        System.out.print("Sigma = {");
+        ArrayList<Character> alphabet = Thompson.inputAlphabet;
+        for (int i = 0; i < alphabet.size(); i++)
+        {
+            if(alphabet.get(i) != '_' && i == alphabet.size() -1)
+            {
+                System.out.print(alphabet.get(i));
+            }
+            else if(alphabet.get(i) != '_')
+            {
+                System.out.print(alphabet.get(i) + ",");
+            }
+        }
+        System.out.println("}");
         System.out.println("Delta:");
         for (Trans t: transitions){
             System.out.println("("+"q"+t.state_from +", "+ t.trans_symbol +
@@ -121,13 +153,12 @@ public class AFND {
         }
         System.out.println("s="+"q"+states.get(0));
         System.out.println("F="+"q"+states.get(states.size()-1));
-        System.out.println("Probando AFD: ");
 
         this.AFD= new ArrayList<Integer>();
         this.AFDT= new ArrayList<Trans>();
         AFD.add(0);
-        AFD(0);
-        boolean rep=false;
+        //AFD(0);
+        /*boolean rep=false;
         //aqui en este for que viene lo hice para recorrer las transicions y probar con el estado inicial y sus transiciones espiron
 
         for(int i =0;i<transitions.size();i++)
@@ -135,6 +166,7 @@ public class AFND {
             if(transitions.get(i).state_from ==0 && transitions.get(i).trans_symbol =='_')
             {
                 for(int j=0;j<AFD.size();j++)
+        
                 {
                     if(transitions.get(i).state_to == AFD.get(j))
                     {
@@ -144,15 +176,28 @@ public class AFND {
                 if(rep==false)
                 {                
                     AFD.add(transitions.get(i).state_to);
-                    System.out.println("Vamos a agregar al AFD: "+AFD.get(i));                
+                    //System.out.println("Vamos a agregar al AFD: "+AFD.get(i));                
                 }
                 //System.out.println("q"+AFD.get(i));
             }
-        }
+        }*/
         
        
 
     }    
+    
+    public boolean tieneTransicionVacio(AFND afnd)
+    {
+        for(int i = 0; i < afnd.transitions.size(); i++)
+        {
+            if(afnd.transitions.get(i).trans_symbol == '_')
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     
     public void limpiarArrayNextStates(AFND afnd)
     {

@@ -36,7 +36,27 @@ public class AFD extends AFND
             
     //private Map<List<Integer>,List<List<Integer>>> map;
     
-    public AFD(){}
+    public AFD(AFND afnd, char c)
+    {
+        EstadoAFD e0 = new EstadoAFD();
+        e0.setEstadoInicial(true);
+        ArrayList<Integer> ee0 = new ArrayList<Integer>();
+        ee0.add(0);
+        e0.setEstados(ee0);
+        
+        
+        EstadoAFD e1 = new EstadoAFD();
+        e1.setEstadoFinal(true);
+        ArrayList<Integer> ee1 = new ArrayList<Integer>();
+        ee1.add(1);
+        e1.setEstados(ee1);
+        
+        ArrayList<EstadoAFD> ae = new ArrayList<EstadoAFD>();
+        ae.add(e1);
+        
+        map = new HashMap<>();
+        map.put(e0, ae);
+    }
     
     public AFD(AFND afnd)
     {
@@ -69,8 +89,15 @@ public class AFD extends AFND
         // ------------------- todo esto es para el nodo inicial del AFD -------
         estadoK = new EstadoAFD();
         ArrayList<Integer> estados2 = new ArrayList<>();
-        estados2 = afnd.getNextStatesEPS(afnd, afnd.start_state);
         estados2.add(afnd.start_state);
+        
+        if(tieneTransicionVacio(afnd))
+        {
+            estados2 = afnd.getNextStatesEPS(afnd, afnd.start_state);  
+        }
+        
+        
+        
         Collections.sort(estados2);
         estadoK.setEstados(estados2);
         estadoK.setEstadoInicial(true);
@@ -81,8 +108,6 @@ public class AFD extends AFND
         //----------------------------------------------------------------------
         
         crearMap(estadoK);
-        System.out.println("Tamaño de valores del map:"+map.values().size());
-        System.out.println("Tamaño de estadosV:"+estadosV.size());
         // arreglar esto vvvvvvvvvvvvvvvvvvvvvvvvvv
         for (int i = 0; i < map.values().size(); i++)
         {
@@ -104,18 +129,21 @@ public class AFD extends AFND
                     crearMap(estadoK);
                 
                 }
-            }
-            
+            }  
         }
         
-        for (int i = 0; i < map.values().size(); i++)
+        /*
+        // agregamos el sumidero al map
+        EstadoAFD sumidero= new EstadoAFD();
+        ArrayList<Integer> listaSumidero = new ArrayList<>();
+        ArrayList<EstadoAFD> valuesSumidero = new ArrayList<>();
+        sumidero.setEstados(listaSumidero);
+        for (Character alphabet1 : alphabet)
         {
-            for(int j=0;j<estadosV.size();j++)
-            {
-                
-            }
-            
+            valuesSumidero.add(sumidero);
         }
+        map.put(sumidero, valuesSumidero);
+        */
     }
     
     public void crearMap(EstadoAFD estadoK)
