@@ -118,7 +118,7 @@ public class AFD extends AFND
         //----------------------------------------------------------------------
         
         crearMap(estadoK);
-        // arreglar esto vvvvvvvvvvvvvvvvvvvvvvvvvv
+        
         for (int i = 0; i < map.values().size(); i++)
         {
             for(int j=0;j<estadosV.size();j++)
@@ -126,8 +126,7 @@ public class AFD extends AFND
                 if(!map.keySet().contains(map.values().iterator().next()))
                 {
                     estadoK = new EstadoAFD();
-                    estadoK.setEstados(estadosV.get(j).getEstados());// El problema lo causa el map, ya que este tiene menos elementos que estados V
-                    
+                    estadoK.setEstados(estadosV.get(j).getEstados());
                      if(estadoK.getEstados().contains(afnd.final_state))       
                     {
                         estadoK.setEstadoFinal(true);
@@ -182,12 +181,8 @@ public class AFD extends AFND
                     e.setEstadoFinal(true);
                 }
                 
-                //estadosV.add(i,crearEstadoAFD(estadoK.getEstados().get(j), alphabet.get(i)));
-                //System.out.println("estadoV " + j + ": " + estadosV.get(j).getEstados().toString());             
-                //crearEstadoAFD(afnd.states.get(i),alphabet.get(j));
+                
             }
-            //e.setNumEstado(numEstado++);
-            //System.out.println("list: " + list.toString());
             estadosV.add(e);
             afnd.limpiarArrayNextStates(afnd);
         }
@@ -204,8 +199,7 @@ public class AFD extends AFND
 
                 AFDArrayList.add(transitions.get(i).state_to);
                 AFDTransiciones.add(transitions.get(i));
-                CrearAFD(afnd.transitions.get(i).state_to,c);        
-                //System.out.println("q"+AFD.get(i));
+                CrearAFD(afnd.transitions.get(i).state_to,c);     
             }
         }
     }

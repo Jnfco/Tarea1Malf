@@ -1,19 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package javaapplication5;
 
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Scanner;
 import static javaapplication5.Thompson.compile;
 public class Main
 {
    
 
-   public static void main(String[] args){
-        Scanner sc = new Scanner(System.in);
+   public static void main(String[] args) throws FileNotFoundException, IOException{
+        /*Scanner sc = new Scanner(System.in);
         String line;
         System.out.println("\nEnter a regular expression with the " +
             "alphabet ['a','z'] & E for empty "+"\n* for Kleene Star" + 
@@ -25,25 +25,28 @@ public class Main
                 "\nelements with nothing between them indicates " +
                 "concatenation "+ "\n| for Union \n\":q\" to quit");
             line = sc.nextLine();
-            if (line.equals(":q") || line.equals("QUIT"))
-                break;
-            AFND nfa_of_input = compile(line);
-            //System.out.println("\nNFA:");
+         */
+       String line;
+       
+       BufferedReader br = new BufferedReader(new FileReader("test.in"));
+       
+        line = br.readLine();
+        AFND afnd = compile(line);
             
             
-            nfa_of_input.display();
+            afnd.display();
             
-            if(nfa_of_input.transitions.size() == 1)
+            if(afnd.transitions.size() == 1)
             {
-                AFD afd = new AFD(nfa_of_input, line.charAt(0));
+                AFD afd = new AFD(afnd, line.charAt(0));
             }
             else
             {
-                AFD afd = new AFD(nfa_of_input);
+                AFD afd = new AFD(afnd);
             }
             
             
         }
     }
    
-}
+

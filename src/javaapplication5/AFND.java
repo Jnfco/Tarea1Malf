@@ -1,15 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package javaapplication5;
 
 import java.util.ArrayList;
 
 /**
  *
- * @author jnfco
+ * 
  */
 public class AFND {
       
@@ -157,30 +153,6 @@ public class AFND {
         this.AFD= new ArrayList<Integer>();
         this.AFDT= new ArrayList<Trans>();
         AFD.add(0);
-        //AFD(0);
-        /*boolean rep=false;
-        //aqui en este for que viene lo hice para recorrer las transicions y probar con el estado inicial y sus transiciones espiron
-
-        for(int i =0;i<transitions.size();i++)
-        {
-            if(transitions.get(i).state_from ==0 && transitions.get(i).trans_symbol =='_')
-            {
-                for(int j=0;j<AFD.size();j++)
-        
-                {
-                    if(transitions.get(i).state_to == AFD.get(j))
-                    {
-                        rep=true;
-                    }
-                }
-                if(rep==false)
-                {                
-                    AFD.add(transitions.get(i).state_to);
-                    //System.out.println("Vamos a agregar al AFD: "+AFD.get(i));                
-                }
-                //System.out.println("q"+AFD.get(i));
-            }
-        }*/
         
        
 

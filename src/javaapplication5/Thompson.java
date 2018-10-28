@@ -1,53 +1,36 @@
 package javaapplication5;
 
 
-import java.util.Scanner;
+
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 import java.util.Stack;
-import javaapplication5.AFND;
-import javaapplication5.Trans;
 
 public class Thompson {
     
-    private static Set<Integer> set1 = new HashSet <Integer> ();
-    private static Set<Integer> set2 = new HashSet <Integer> ();
-    /*
-        Trans - object is used as a tuple of 3 items to depict transitions
-            (state from, symbol of tranistion path, state to)
-    */
-
-
-    /*
-        NFA - serves as the graph that represents the Non-Deterministic
-            Finite Automata. Will use this to better combine the states.
-    */
-
-
-    /*
-        kleene() - Highest Precedence regular expression operator. Thompson
-            algoritm for kleene star.
-    */
+    private static Set<Integer> set1 = new HashSet <> ();
+    private static Set<Integer> set2 = new HashSet <> ();
+    
     public static AFND kleene(AFND n){ //metodo para la estrella de kleene que recibe un objeto tipo NFA
-        AFND result = new AFND(n.states.size()+2); // crea un nuevo NFA 
-        result.transitions.add(new Trans(0, 1, '_')); // new trans for q0 ,agrega transicion del 0 al 1 usando el vacio
+        AFND result = new AFND(n.states.size()+2); // crea un nuevo AFND
+        result.transitions.add(new Trans(0, 1, '_')); // agrega transicion del 0 al 1 usando el vacio
 
-        // copy existing transisitons
+        // copia las transiciones existentes
         for (Trans t: n.transitions){
             result.transitions.add(new Trans(t.state_from + 1, //crea mas transiciones apartir de la inicial
             t.state_to + 1, t.trans_symbol));
         }
         
-        // add empty transition from final n state to new final state.
-        result.transitions.add(new Trans(n.states.size(), 
-            n.states.size() + 1, '_')); //Agregar transicion vacio del estado n al nuevo estado final
         
-        // Loop back from last state of n to initial state of n.
+        // Agrega transicion vacía desde el estado final n al nuevo estado final
+        result.transitions.add(new Trans(n.states.size(), 
+            n.states.size() + 1, '_')); 
+        
+        // Vuelve desde el ultimo estado de n al estado inicial de n
         result.transitions.add(new Trans(n.states.size(), 1, '_'));
 
-        // Add empty transition from new initial state to new final state.
+        // Agrega una transicion vacia desde eñ nuevp estado inicial al nuevo estado final
         result.transitions.add(new Trans(0, n.states.size() + 1, '_'));
 
         result.final_state = n.states.size() + 1;
@@ -55,19 +38,19 @@ public class Thompson {
     }
 
     /*
-        concat() - Thompson algorithm for concatenation. Middle Precedence.
+        concat() - Algoritmo de thompson para la concatenación
     */
     public static AFND concat(AFND n, AFND m){
-        ///*
-        m.states.remove(0); // delete m's initial state
+        
+        m.states.remove(0); // Elimina los estados iniciales de m
 
-        // copy NFA m's transitions to n, and handles connecting n & m
+        // Copya las transiciones del AFND m a n
         for (Trans t: m.transitions){
             n.transitions.add(new Trans(t.state_from + n.states.size()-1,
                 t.state_to + n.states.size() - 1, t.trans_symbol));
         }
 
-        // take m and combine to n after erasing inital m state
+        // Toma m y lo combina con n despues de eliminar el estado inicial de m
         for (Integer s: m.states){
             n.states.add(s + n.states.size() + 1);
         }
@@ -78,46 +61,43 @@ public class Thompson {
     }
     
     /*
-        union() - Lowest Precedence regular expression operator. Thompson
-            algorithm for union (or). 
+        Algoritmo de thompson para la unión (or)
     */
     public static AFND union(AFND n, AFND m){
         AFND result = new AFND(n.states.size() + m.states.size() + 2);
 
-        // the branching of q0 to beginning of n
+        
         result.transitions.add(new Trans(0, 1, '_'));
         
-        // copy existing transisitons of n
+        // copia las transiciones existentes de n
         for (Trans t: n.transitions){
             result.transitions.add(new Trans(t.state_from + 1,
             t.state_to + 1, t.trans_symbol));
         }
         
-        // transition from last n to final state
         result.transitions.add(new Trans(n.states.size(),
             n.states.size() + m.states.size() + 1, '_'));
 
-        // the branching of q0 to beginning of m
+        
         result.transitions.add(new Trans(0, n.states.size() + 1, '_'));
 
-        // copy existing transisitons of m
+        // copia las transiciones existentes de m
         for (Trans t: m.transitions){
             result.transitions.add(new Trans(t.state_from + n.states.size()
                 + 1, t.state_to + n.states.size() + 1, t.trans_symbol));
         }
         
-        // transition from last m to final state
         result.transitions.add(new Trans(m.states.size() + n.states.size(),
             n.states.size() + m.states.size() + 1, '_'));
        
-        // 2 new states and shifted m to avoid repetition of last n & 1st m
+        // 2 nuevos estados  e intercambiados con m para evitar la repeticion del ultimo elemento de n y el primero de m
         result.final_state = n.states.size() + m.states.size() + 1;
         return result;
     }
 
    
 
-    // simplify the repeated boolean condition checks
+    
     public static boolean alpha(char c){ return c >= 'a' && c <= 'z';}
     public static boolean alphaM(char c){ return c >= 'A' && c <= 'Z';}
     public static boolean alphaN(char c){ return c >= '0' && c <= '9'; }
@@ -127,7 +107,8 @@ public class Thompson {
     public static boolean validRegExChar(char c){ return alphabet(c) || regexOperator(c); }
     
     public static ArrayList<Character> inputAlphabet;
-    // validRegEx() - checks if given string is a valid regular expression.
+    
+    // validRegEx() - comprueba si la expresión regular es válida
     public static boolean validRegEx(String regex)
     {
         inputAlphabet = new ArrayList<>();
@@ -187,29 +168,20 @@ public class Thompson {
                 if (!flag) inputAlphabet.add(regex.charAt(i));
             }
         }
-        // si la cantidad de paréntesis izq y der son los mismos retornamos true
-        // false en caso contrario (la ER no es válida)
-        /*
-        for (int k = 0; k < inputAlphabet.size(); k++)
-        {
-            System.out.println("alfabeto: "+inputAlphabet.get(k));
-        }
-        */
+       
+        
         return l == r; 
     }
 
     /*
-        compile() - compile given regualr expression into a NFA using 
-            Thompson Construction Algorithm. Will implement typical compiler
-            stack model to simplify processing the string. This gives 
-            descending precedence to characters on the right.
+        Dada una expresion regular la convierte a AFND usando el metodo de thompson
     */
     public static AFND compile(String regex)
     {
         if (!validRegEx(regex))
         {
-            System.out.println("Invalid Regular Expression Input.");
-            return new AFND(); // empty NFA if invalid regex
+            System.out.println("Expresión regular inválida.");
+            return new AFND(); 
         }
         
         if(regex.length() == 1 && alphabet(regex.charAt(0)))
@@ -220,8 +192,8 @@ public class Thompson {
         Stack <Character> operators = new Stack <Character> ();
         Stack <AFND> operands = new Stack <AFND> ();
         Stack <AFND> concat_stack = new Stack <AFND> ();
-        boolean ccflag = false; // concat flag
-        char op, c; // current character of string
+        boolean ccflag = false; 
+        char op, c; 
         int para_count = 0;
         AFND nfa1, nfa2;
 
@@ -232,8 +204,8 @@ public class Thompson {
             {
                 operands.push(new AFND(c));
                 if (ccflag)
-                { // concat this w/ previous
-                    operators.push('.'); // '.' used to represent concat.
+                { 
+                    operators.push('.');
                 }
                 else
                     ccflag = true;
@@ -251,7 +223,7 @@ public class Thompson {
                     }
                     else{ para_count--;}
                     
-                    // process stuff on stack till '('
+                    
                     while (!operators.empty() && operators.peek() != '(')
                     {
                         op = operators.pop();
@@ -294,7 +266,7 @@ public class Thompson {
                     ccflag = true;
                 }
                 else if (c == '(')
-                { // if any other operator: push
+                { 
                     operators.push(c);
                     para_count++;
                 }
@@ -307,8 +279,8 @@ public class Thompson {
         }
         while (operators.size() > 0){
             if (operands.empty()){
-                System.out.println("Error: imbalanace in operands and "
-                + "operators");
+                System.out.println("Error: no hay balance entre operandos y "
+                + "operadores");
                 System.exit(1);
             }
             op = operators.pop();
@@ -340,110 +312,6 @@ public class Thompson {
         return operands.pop();
     }
     
-    /*
-    public static AFD generateDFA(AFND afnd) 
-    {
-        // Creating the DFA
-        AFD afd = new AFD();
-
-        // Clearing all the states ID for the DFA
-        int stateID = 0;
-
-        // Create an arrayList of unprocessed States
-        LinkedList <Integer> unprocessed = new LinkedList<Integer> ();
-
-        // Create sets
-        set1 = new HashSet <Integer> ();
-        set2 = new HashSet <Integer> ();
-
-        // Add first state to the set1
-        set1.add(afnd.start_state);
-
-        // Run the first remove Epsilon the get states that
-        // run with epsilon
-        removeEpsilonTransition();
-
-        // Create the start state of DFA and add to the stack
-        State dfaStart = new State (set2, stateID++);
-
-        dfa.getDfa().addLast(dfaStart);
-        unprocessed.addLast(dfaStart);
-
-        // While there is elements in the stack
-        while (!unprocessed.isEmpty()) {
-                // Process and remove last state in stack
-                State state = unprocessed.removeLast();
-
-                // Check if input symbol
-                for (Character symbol : input) {
-                        set1 = new HashSet<State> ();
-                        set2 = new HashSet<State> ();
-
-                        moveStates (symbol, state.getStates(), set1);
-                        removeEpsilonTransition ();
-
-                        boolean found = false;
-                        State st = null;
-
-                        for (int i = 0 ; i < dfa.getDfa().size(); i++) {
-                                st = dfa.getDfa().get(i);
-
-                                if (st.getStates().containsAll(set2)) {
-                                        found = true;
-                                        break;
-                                }
-                        }
-
-                        // Not in the DFA set, add it
-                        if (!found) {
-                                State p = new State (set2, stateID++);
-                                unprocessed.addLast(p);
-                                dfa.getDfa().addLast(p);
-                                state.addTransition(p, symbol);
-
-                        // Already in the DFA set
-                        } else {
-                                state.addTransition(st, symbol);
-                        }
-                }			
-        }
-        // Return the complete DFA
-        return dfa;
-	}
-
-	// Remove the epsilon transition from states
-	private static void removeEpsilonTransition() {
-		Stack <Integer> stack = new Stack <Integer> ();
-		set2 = set1;
-
-		for (Integer st : set1) { stack.push(st); }
-
-		while (!stack.isEmpty()) {
-			Integer st = stack.pop();
-
-			ArrayList <Integer> epsilonStates = st.getAllTransitions('_');
-
-			for (State p : epsilonStates) {
-				// Check p is in the set otherwise Add
-				if (!set2.contains(p)) {
-					set2.add(p);
-					stack.push(p);
-				}				
-			}
-		}		
-	}
-
-	// Move states based on input symbol
-	private static void moveStates(Character c, Set<State> states,	Set<State> set) {
-		ArrayList <State> temp = new ArrayList<State> ();
-
-		for (State st : states) {	temp.add(st);	}
-		for (State st : temp) {			
-			ArrayList<State> allStates = st.getAllTransitions(c);
-
-			for (State p : allStates) {	set.add(p);	}
-		}
-        } 
-*/
+  
 
 }
