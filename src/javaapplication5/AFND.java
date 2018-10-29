@@ -149,7 +149,8 @@ public class AFND {
         }
         System.out.println("s="+"q"+states.get(0));
         System.out.println("F="+"q"+states.get(states.size()-1));
-
+        System.out.println("");
+        
         this.AFD= new ArrayList<Integer>();
         this.AFDT= new ArrayList<Trans>();
         AFD.add(0);

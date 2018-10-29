@@ -144,18 +144,29 @@ public class AFD extends AFND
         
         
         // agregamos el sumidero al map
-        EstadoAFD sumidero= new EstadoAFD();
-        ArrayList<Integer> listaSumidero = new ArrayList<>();
-        ArrayList<EstadoAFD> valuesSumidero = new ArrayList<>();
-        sumidero.setEstados(listaSumidero);
-        for (Character alphabet1 : alphabet)
+        boolean hayNull = false;
+        for(Map.Entry<EstadoAFD, ArrayList<EstadoAFD>> entry : map.entrySet())
         {
-            valuesSumidero.add(sumidero);
+            if(entry.getKey().getEstados().isEmpty())
+            {
+                hayNull = true;
+                break;
+            }
         }
-        //sumidero.setNumEstado(numEstado++);
-        sumidero.setNumEstado(getNumEstadoSumidero());
-        map.put(sumidero, valuesSumidero);
-        
+        if(!hayNull)
+        {
+            EstadoAFD sumidero= new EstadoAFD();
+            ArrayList<Integer> listaSumidero = new ArrayList<>();
+            ArrayList<EstadoAFD> valuesSumidero = new ArrayList<>();
+            sumidero.setEstados(listaSumidero);
+            for (Character alphabet1 : alphabet)
+            {
+                valuesSumidero.add(sumidero);
+            }
+            //sumidero.setNumEstado(numEstado++);
+            sumidero.setNumEstado(getNumEstadoSumidero());
+            map.put(sumidero, valuesSumidero);
+        }
     }
     
     public void crearMap(EstadoAFD estadoK)
