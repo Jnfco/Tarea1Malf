@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import static javaapplication5.Thompson.alphabet;
@@ -88,8 +89,13 @@ public class AFD extends AFND
         
         displayAFD();
         
+        // intento de grafo by nico
+        graph();
+        
+        
         System.out.println("Fin del programa!");
        
+        
         
         
     }
@@ -113,7 +119,8 @@ public class AFD extends AFND
         {
             estadoK.setEstadoFinal(true);
         }
-        estadoK.setNumEstado(numEstado++);
+        estadoK.setNumEstado(numEstado);
+        numEstado++;
         
         //----------------------------------------------------------------------
         
@@ -127,7 +134,8 @@ public class AFD extends AFND
                 {
                     estadoK = new EstadoAFD();
                     estadoK.setEstados(estadosV.get(j).getEstados());
-                     if(estadoK.getEstados().contains(afnd.final_state))       
+                    estadoK.setNumEstado(estadosV.get(j).getNumEstado());
+                    if(estadoK.getEstados().contains(afnd.final_state))       
                     {
                         estadoK.setEstadoFinal(true);
                     }
@@ -135,7 +143,7 @@ public class AFD extends AFND
                     {
                         estadoK.setEstadoInicial(true);
                     }
-                    estadoK.setNumEstado(numEstado++);
+                    //estadoK.setNumEstado(numEstado++);//---------------------------------------------------------------
                     crearMap(estadoK);
                 
                 }
@@ -164,7 +172,7 @@ public class AFD extends AFND
                 valuesSumidero.add(sumidero);
             }
             //sumidero.setNumEstado(numEstado++);
-            sumidero.setNumEstado(getNumEstadoSumidero());
+            sumidero.setNumEstado(numEstado);
             map.put(sumidero, valuesSumidero);
         }
     }
@@ -178,6 +186,7 @@ public class AFD extends AFND
         estadosV = new ArrayList<EstadoAFD>();
         for(int i = 0; i < alphabet.size(); i++)
         {
+            boolean flag = false;
             EstadoAFD e = new EstadoAFD();
             list = new ArrayList<Integer>();
             
@@ -191,8 +200,40 @@ public class AFD extends AFND
                 {
                     e.setEstadoFinal(true);
                 }
-                
-                
+            }
+            if(map.isEmpty())
+            {
+                e.setNumEstado(numEstado);
+                numEstado++;
+            }
+            else
+            {
+                for(Map.Entry<EstadoAFD, ArrayList<EstadoAFD>> entry : map.entrySet())
+                {
+                    if(entry.getKey().getEstados() == e.getEstados())
+                    {
+                        e.setNumEstado(entry.getKey().getNumEstado());
+                        flag = true;
+                        break;
+                    }
+                    else
+                    {
+                        for(int k = 0; k < alphabet.size(); k++)
+                        {
+                            if(entry.getValue().get(k).getEstados() == e.getEstados())
+                            {
+                                e.setNumEstado(entry.getValue().get(k).getNumEstado());
+                                flag = true;
+                                break;
+                            }
+                        }
+                    }
+                }    
+            }
+            if(!flag)
+            {
+                e.setNumEstado(numEstado);
+                numEstado++;
             }
             estadosV.add(e);
             afnd.limpiarArrayNextStates(afnd);
@@ -368,6 +409,35 @@ public class AFD extends AFND
         return est.size();
     }
     
-   
+    public void graph()
+    {
+        HashMap<Integer,LinkedList<Integer>> map2 = new HashMap<>();
+        //LinkedList<EstadoAFD> l = new LinkedList<>();
+        for(Map.Entry<EstadoAFD, ArrayList<EstadoAFD>> entry : map.entrySet())
+        {
+            for(int i = 0; i < alphabet.size(); i++)
+            {
+                if(!map2.containsKey(entry.getKey()))
+                {
+                    LinkedList<Integer> l= new LinkedList<>();
+                    l.add(entry.getValue().get(i).getNumEstado());
+                    map2.put(entry.getKey().getNumEstado(), l);
+                }
+
+                else
+                {
+                    LinkedList<Integer> l = map2.get(entry.getKey());
+                    l.add(entry.getValue().get(i).getNumEstado());
+                    map2.put(entry.getKey().getNumEstado(), l);
+                }
+            }
+        }
+        
+        for(Map.Entry m: map2.entrySet())
+        {
+            System.out.println(m.getKey()+"-->"+m.getValue());
+        }
+        
+    }
     
 }
