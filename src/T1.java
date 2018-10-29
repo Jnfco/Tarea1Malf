@@ -1,14 +1,10 @@
 
-package javaapplication5;
-
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
-import static javaapplication5.Thompson.compile;
-public class Main
+public class T1
 {
    
 
@@ -31,7 +27,7 @@ public class Main
        BufferedReader br = new BufferedReader(new FileReader("test.in"));
        
         line = br.readLine();
-        AFND afnd = compile(line);
+        AFND afnd = Thompson.compile(line);
             
             
             afnd.display();

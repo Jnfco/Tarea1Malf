@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package javaapplication5;
+
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,7 +14,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import static javaapplication5.Thompson.alphabet;
 
 /**
  *
@@ -32,8 +31,6 @@ public class AFD extends AFND
     private int estadoInicial;
     private int estadoFinal;
     private Map<EstadoAFD, ArrayList<EstadoAFD>> map;
-    private ArrayList<Integer>AFDArrayList;
-    private ArrayList<Trans>AFDTransiciones;
     private int numEstado;
     ArrayList<Integer> est;
             
@@ -139,13 +136,12 @@ public class AFD extends AFND
                     {
                         estadoK.setEstadoFinal(true);
                     }
-                      if(estadoK.getEstados().contains(afnd.start_state))       
+                    if(estadoK.getEstados().contains(afnd.start_state))       
                     {
                         estadoK.setEstadoInicial(true);
                     }
                     //estadoK.setNumEstado(numEstado++);//---------------------------------------------------------------
                     crearMap(estadoK);
-                
                 }
             }  
         }
@@ -153,15 +149,29 @@ public class AFD extends AFND
         
         // agregamos el sumidero al map
         boolean hayNull = false;
+        int numEstadoSumidero = -1;
         for(Map.Entry<EstadoAFD, ArrayList<EstadoAFD>> entry : map.entrySet())
         {
             if(entry.getKey().getEstados().isEmpty())
             {
+                numEstadoSumidero = entry.getKey().getNumEstado();
                 hayNull = true;
                 break;
             }
+            else
+            {
+                for(int i = 0; i < alphabet.size(); i++)
+                {
+                    if(entry.getValue().get(i).getEstados().isEmpty())
+                    {
+                        numEstadoSumidero = entry.getValue().get(i).getNumEstado();
+                        hayNull = true;
+                        break;
+                    }
+                }
+            }
         }
-        if(!hayNull)
+        if(hayNull)
         {
             EstadoAFD sumidero= new EstadoAFD();
             ArrayList<Integer> listaSumidero = new ArrayList<>();
@@ -172,7 +182,8 @@ public class AFD extends AFND
                 valuesSumidero.add(sumidero);
             }
             //sumidero.setNumEstado(numEstado++);
-            sumidero.setNumEstado(numEstado);
+            sumidero.setNumEstado(numEstadoSumidero);
+            //numEstado = numEstadoSumidero + 1;
             map.put(sumidero, valuesSumidero);
         }
     }
@@ -188,7 +199,7 @@ public class AFD extends AFND
         {
             boolean flag = false;
             EstadoAFD e = new EstadoAFD();
-            list = new ArrayList<Integer>();
+            list = new ArrayList<>();
             
             for(int j = 0; j < estadoK.getEstados().size(); j++)
             {
@@ -200,36 +211,34 @@ public class AFD extends AFND
                 {
                     e.setEstadoFinal(true);
                 }
-            }
-            if(map.isEmpty())
-            {
-                e.setNumEstado(numEstado);
-                numEstado++;
-            }
-            else
-            {
-                for(Map.Entry<EstadoAFD, ArrayList<EstadoAFD>> entry : map.entrySet())
+                
+                if(!map.isEmpty())
                 {
-                    if(entry.getKey().getEstados() == e.getEstados())
+                    for(Map.Entry<EstadoAFD, ArrayList<EstadoAFD>> entry : map.entrySet())
                     {
-                        e.setNumEstado(entry.getKey().getNumEstado());
-                        flag = true;
-                        break;
-                    }
-                    else
-                    {
-                        for(int k = 0; k < alphabet.size(); k++)
+                        if(entry.getKey().getEstados().equals(e.getEstados()))
                         {
-                            if(entry.getValue().get(k).getEstados() == e.getEstados())
+                            e.setNumEstado(entry.getKey().getNumEstado());
+                            flag = true;
+                            break;
+                        }
+                        else
+                        {
+                            for(int k = 0; k < alphabet.size(); k++)
                             {
-                                e.setNumEstado(entry.getValue().get(k).getNumEstado());
-                                flag = true;
-                                break;
+                                if((entry.getValue().get(k).getEstados().equals(e.getEstados())) || 
+                                        (entry.getValue().get(k).getEstados().isEmpty() && e.getEstados().isEmpty()))
+                                {
+                                    e.setNumEstado(entry.getValue().get(k).getNumEstado());
+                                    flag = true;
+                                    break;
+                                }
                             }
                         }
-                    }
-                }    
+                    }    
+                }
             }
+            
             if(!flag)
             {
                 e.setNumEstado(numEstado);
@@ -239,21 +248,6 @@ public class AFD extends AFND
             afnd.limpiarArrayNextStates(afnd);
         }
         map.put(estadoK, estadosV);
-    }
-    
-    
-    public void CrearAFD(int estado,Character c)
-    {
-        for(int i =0;i<afnd.transitions.size();i++)
-        {
-            if(afnd.transitions.get(i).state_from ==estado && afnd.transitions.get(i).trans_symbol ==c)
-            {
-
-                AFDArrayList.add(transitions.get(i).state_to);
-                AFDTransiciones.add(transitions.get(i));
-                CrearAFD(afnd.transitions.get(i).state_to,c);     
-            }
-        }
     }
     
     public void displayAFD()
@@ -267,15 +261,15 @@ public class AFD extends AFND
             est.add(entry.getKey().getNumEstado());
         }
         Collections.sort(est);
-        for(Integer i : est)
+        for(int i = 0; i < est.size(); i++)
         {
             if(est.get(i) < est.size() - 1)
             {
-                System.out.print("q" + i + ",");
+                System.out.print("q" + est.get(i) + ",");
             }
             else
             {
-                System.out.print("q" + i + "}");
+                System.out.print("q" + est.get(i) + "}");
             }
         }
         System.out.println("");
